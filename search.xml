@@ -4,6 +4,62 @@
   
     
     <entry>
+      <title>cpp学习</title>
+      <link href="/cm6mfxfig0000n8t48pvu7kvw.html"/>
+      <url>/cm6mfxfig0000n8t48pvu7kvw.html</url>
+      
+        <content type="html"><![CDATA[]]></content>
+      
+      
+      <categories>
+          
+          <category> cpp基础学习 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> cpp </tag>
+            
+            <tag> 编程 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
+      <title>Stm32之定时器</title>
+      <link href="/cm6mfxfiv0001n8t45txkalmr.html"/>
+      <url>/cm6mfxfiv0001n8t45txkalmr.html</url>
+      
+        <content type="html"><![CDATA[<blockquote><p>Stm32中定时器的使用无疑是至关重要的，通过使用定时器可以使我们的流程控制更加简单可控，还可以使我们的代码模块化，方便管理与调试。Stm32的定时器的使用分为定时中断、输出比较、输入捕获、编码器接口这几个主要部分，下面一一来介绍。</p></blockquote><h1 id="定时器框图"><a href="#定时器框图" class="headerlink" title="定时器框图"></a>定时器框图</h1><p><img src="/cm6l4k2150008y4t4gopb3zmr/ge-20250201222055382.png" alt="image-20250201222055382"></p><h1 id="定时中断"><a href="#定时中断" class="headerlink" title="定时中断"></a>定时中断</h1><h2 id="定时中断基本结构"><a href="#定时中断基本结构" class="headerlink" title="定时中断基本结构"></a>定时中断基本结构</h2><p><img src="/cm6l4k2150008y4t4gopb3zmr/ge-20250201222255621.png" alt="image-20250201222255621"></p><h2 id="影子寄存器"><a href="#影子寄存器" class="headerlink" title="影子寄存器"></a>影子寄存器</h2><p>影子寄存器：在改变自动重装寄存器TIMx_ARR时，若开启影子寄存器，该寄存器中的值不会立即更新，而是会在产生又一个更新事件后，更新该寄存器中的值，可以防止某些意外情况的发生。比如，初始ARR的值为5，当计数器中的值为4时更改ARR为3，此时4 &gt;3，但是不等于3，随着时间的增加，计数器中的值只会在超出计数器计数上限时溢出，当计数器中的值再次等于3时才会产生一次更新事件。</p><h2 id="计数器溢出频率"><a href="#计数器溢出频率" class="headerlink" title="计数器溢出频率"></a>计数器溢出频率</h2><p><strong>计数器溢出频率</strong>：CK_CNT_OV &#x3D; CK_CNT &#x2F; (ARR + 1)       </p><p>​     &#x3D; CK_PSC &#x2F; (PSC + 1) &#x2F; (ARR + 1)</p><h2 id="定时器中断代码演示"><a href="#定时器中断代码演示" class="headerlink" title="定时器中断代码演示"></a>定时器中断代码演示</h2><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">void</span> <span class="title function_">Timer_Init</span><span class="params">(<span class="type">void</span>)</span></span><br><span class="line">&#123;</span><br><span class="line">    RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM2, ENABLE); <span class="comment">//开启时钟</span></span><br><span class="line">    </span><br><span class="line">    TIM_InternalClockConfig(TIM2); <span class="comment">//设置时钟源</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">//时基单元设置</span></span><br><span class="line">    TIM_TimeBaseInitTypeDef TIM_TimeBaseInitStructure;</span><br><span class="line">    TIM_TimeBaseInitStructure.TIM_ClockDivision = TIM_CKD_DIV1;<span class="comment">//分频系数</span></span><br><span class="line">    TIM_TimeBaseInitStructure.TIM_CounterMode = TIM_CounterMode_Up;<span class="comment">//向上计数模式</span></span><br><span class="line">    TIM_TimeBaseInitStructure.TIM_Period = <span class="number">10000</span> - <span class="number">1</span>;<span class="comment">//ARR</span></span><br><span class="line">    TIM_TimeBaseInitStructure.TIM_Prescaler = <span class="number">7200</span> - <span class="number">1</span>;<span class="comment">//psc</span></span><br><span class="line">    TIM_TimeBaseInitStructure.TIM_RepetitionCounter = <span class="number">0</span>;<span class="comment">//RCR,仅高级定时器才有</span></span><br><span class="line">    TIM_TimeBaseInit(TIM2, &amp;TIM_TimeBaseInitStructure);</span><br><span class="line">    </span><br><span class="line">    TIM_ClearFlag(TIM2, TIM_FLAG_Update);<span class="comment">//清除标志位</span></span><br><span class="line">    TIM_ITConfig(TIM2, TIM_IT_Update, ENABLE);<span class="comment">//定时器中断使能</span></span><br><span class="line">    </span><br><span class="line">    NVIC_PriorityGroupConfig(NVIC_PriorityGroup_2);<span class="comment">//NVIC分组，全局仅需配置一次</span></span><br><span class="line">    </span><br><span class="line">    <span class="comment">//NVIC</span></span><br><span class="line">    NVIC_InitTypeDef NVIC_InitStructure;</span><br><span class="line">    NVIC_InitStructure.NVIC_IRQChannel = TIM2_IRQn;</span><br><span class="line">    NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE;</span><br><span class="line">    NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = <span class="number">2</span>;<span class="comment">//抢占优先级</span></span><br><span class="line">    NVIC_InitStructure.NVIC_IRQChannelSubPriority = <span class="number">1</span>;<span class="comment">//响应优先级</span></span><br><span class="line">    NVIC_Init(&amp;NVIC_InitStructure);</span><br><span class="line">    </span><br><span class="line">    TIM_Cmd(TIM2, ENABLE);<span class="comment">//打开定时器</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="type">void</span> <span class="title function_">TIM2_IRQHandler</span><span class="params">(<span class="type">void</span>)</span><span class="comment">//中断函数</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (TIM_GetITStatus(TIM2, TIM_IT_Update) == SET)</span><br><span class="line">    &#123;</span><br><span class="line">        Num ++;</span><br><span class="line">        TIM_ClearITPendingBit(TIM2, TIM_IT_Update);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure><h2 id="一般情况下的定时中断配置步骤"><a href="#一般情况下的定时中断配置步骤" class="headerlink" title="一般情况下的定时中断配置步骤"></a>一般情况下的定时中断配置步骤</h2><ol><li>开启时钟；</li><li>选择时钟源；</li><li>配置时基单元；</li><li>中断配置；</li><li>NVIC优先级配置；</li><li>中断函数编写。</li></ol><h2 id="关于时钟源的选择"><a href="#关于时钟源的选择" class="headerlink" title="关于时钟源的选择"></a>关于时钟源的选择</h2><ol><li><p>内部时钟模式</p><ul><li>RCC内部时钟</li></ul></li><li><p>外部时钟模式2</p><ul><li>ETR外部时钟</li></ul></li><li><p>外部时钟模式1</p><ul><li>ETR外部时钟</li><li>ITRx其他定时器</li><li>TIx捕获通道</li></ul></li><li><p>编码器模式</p><ul><li>TIx捕获通道</li></ul></li></ol><h1 id="输出比较"><a href="#输出比较" class="headerlink" title="输出比较"></a>输出比较</h1>]]></content>
+      
+      
+      <categories>
+          
+          <category> Stm32 </category>
+          
+      </categories>
+      
+      
+        <tags>
+            
+            <tag> Stm32 </tag>
+            
+            <tag> 定时器 </tag>
+            
+            <tag> 单片机开发 </tag>
+            
+        </tags>
+      
+    </entry>
+    
+    
+    
+    <entry>
       <title>Markdown基础语法</title>
       <link href="/cm6l4k2150008y4t4gopb3zmr.html"/>
       <url>/cm6l4k2150008y4t4gopb3zmr.html</url>
